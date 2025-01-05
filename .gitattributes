@@ -1,0 +1,7 @@
+# Archivos de texto
+* text=auto
+
+# Archivos binarios (sin conversión de líneas)
+*.png binary
+*.jpg binary
+*.gif binary

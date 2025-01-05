@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "912053812543",
+    "project_id": "naturepos-c41de",
+    "storage_bucket": "naturepos-c41de.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912053812543:android:764de2ffb932a8ef9b678a",
+        "android_client_info": {
+          "package_name": "com.naturepos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7rsLNKAwKwbX6Mj8E6R5V-G94MbaKSO8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
