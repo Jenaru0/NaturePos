@@ -1,27 +1,31 @@
-import React, {useState, useEffect} from 'react';
-import {
-  View,
-  TextInput,
-  FlatList,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
-import {db} from '../../services/firebase';
-import {collection, onSnapshot} from 'firebase/firestore';
-import {Button} from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { db } from '../../services/firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { NavigationProp } from '@react-navigation/native';
+import ProductCard from '../../components/ProductCard/ProductCard';
+import ProductFilter from '../../components/ProductFilter/ProductFilter';
+import FloatingActionButton from '../../components/FloatingActionButton/FloatingActionButton';
 
-const InventoryScreen = ({navigation}) => {
-  const [productos, setProductos] = useState([]);
-  const [searchText, setSearchText] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
+const InventoryScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
+  interface Producto {
+    id: string;
+    nombre?: string;
+    categoria?: string;
+    stock?: number;
+    presentaciones?: { nombre: string; capacidad: number; precio: number; stock: number }[];
+    precio?: number;
+    imagen?: string;
+  }
+
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Producto[]>([]);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'productos'), snapshot => {
-      const items = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
+      const items = snapshot.docs.map(document => ({
+        id: document.id,
+        ...document.data(),
       }));
       setProductos(items);
       setFilteredProducts(items);
@@ -30,106 +34,48 @@ const InventoryScreen = ({navigation}) => {
     return () => unsubscribe();
   }, []);
 
-  const handleSearch = text => {
-    setSearchText(text);
-    filterProducts(text, selectedCategory);
+  const handleAddProductPress = () => {
+    navigation.navigate('AddProduct');
   };
 
-  const handleCategoryChange = category => {
-    setSelectedCategory(category);
-    filterProducts(searchText, category);
+  const handleEditProductPress = (productId: string) => {
+    navigation.navigate('EditProduct', { productId });
   };
 
-  const filterProducts = (text, category) => {
-    const filtered = productos.filter(
-      product =>
-        product.nombre?.toLowerCase().includes(text.toLowerCase()) &&
-        (category ? product.categoria === category : true),
-    );
-    setFilteredProducts(filtered);
-  };
+
+
+  const renderProductCard = ({ item }: { item: Producto }) => (
+    <ProductCard
+      product={item}
+      onPress={() => handleEditProductPress(item.id)}
+      showVariants={true}
+      highlightLowStock={true}
+    />
+  );
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Buscar producto..."
-        value={searchText}
-        onChangeText={handleSearch}
-      />
-      <View style={styles.categoryFilters}>
-        {['Todos', 'Suplementos', 'Panes'].map(category => (
-          <TouchableOpacity
-            key={category}
-            style={[
-              styles.filterButton,
-              selectedCategory === category && styles.activeFilter,
-            ]}
-            onPress={() =>
-              handleCategoryChange(category === 'Todos' ? '' : category)
-            }>
-            <Text>{category}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      <ProductFilter productos={productos} onFilter={setFilteredProducts} />
       <FlatList
         data={filteredProducts}
         keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <View
-            style={[styles.productItem, item.cantidad < 5 && styles.lowStock]}>
-            <Text style={styles.productName}>{item.nombre}</Text>
-            <Text>Categoría: {item.categoria}</Text>
-            <Text>Stock: {item.cantidad}</Text>
-            {item.variantes && item.variantes.length > 0 ? (
-              item.variantes.map((variante, index) => (
-                <View key={index} style={styles.variantItem}>
-                  <Text>Variante: {variante.nombre}</Text>
-                  <Text>Cantidad: {variante.cantidad}</Text>
-                  <Text>Precio: S/{variante.precio}</Text>
-                </View>
-              ))
-            ) : (
-              <Text>Precio: S/{item.precio}</Text>
-            )}
-          </View>
-        )}
+        renderItem={renderProductCard}
+        numColumns={2}
+        columnWrapperStyle={styles.row}
+        contentContainerStyle={styles.flatListContent}
       />
-      <Button
-        mode="contained"
-        onPress={() => navigation.navigate('AddProduct')}>
-        Agregar Producto
-      </Button>
+      <FloatingActionButton onPress={handleAddProductPress} iconName="add" />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 16},
-  title: {fontSize: 24, fontWeight: 'bold', marginBottom: 20},
-  searchInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 8,
-    marginBottom: 10,
-    borderRadius: 4,
+  container: { flex: 1, padding: 16, paddingBottom: 80 },
+  flatListContent: { paddingBottom: 80 },
+  row: {
+    flex: 1,
+    justifyContent: 'space-between',
   },
-  categoryFilters: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 10,
-  },
-  filterButton: {
-    padding: 8,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 4,
-  },
-  activeFilter: {backgroundColor: '#03dac4'},
-  productItem: {padding: 10, borderBottomWidth: 1, borderBottomColor: '#ccc'},
-  lowStock: {backgroundColor: '#ffcccb'},
-  variantItem: {paddingLeft: 10, paddingTop: 5},
-  productName: {fontSize: 18, fontWeight: 'bold'},
 });
 
 export default InventoryScreen;

@@ -1,19 +1,19 @@
 import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import SalesScreen from '../screens/SalesScreen/SalesScreen';
-import InventoryScreen from '../screens/InventoryScreen/InventoryScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import BottomNavigation from '../components/BottomNavigation/BottomNavigation';
 import AddProductScreen from '../screens/AddProductScreen/AddProductScreen';
+import EditProductScreen from '../screens/EditProductScreen/EditProductScreen';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Sales">
-        <Stack.Screen name="Sales" component={SalesScreen} />
-        <Stack.Screen name="Inventario" component={InventoryScreen} />
+      <Stack.Navigator initialRouteName="BottomNavigation">
+        <Stack.Screen name="BottomNavigation" component={BottomNavigation} options={{ headerShown: false }} />
         <Stack.Screen name="AddProduct" component={AddProductScreen} />
+        <Stack.Screen name="EditProduct" component={EditProductScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

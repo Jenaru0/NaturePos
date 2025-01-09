@@ -1,8 +1,9 @@
 import React from 'react';
 import AppNavigator from './navigation/AppNavigator';
-import {Provider as PaperProvider} from 'react-native-paper';
-import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import {theme} from './themes/theme';
+import { Provider as PaperProvider } from 'react-native-paper';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import 'react-native-gesture-handler';
+import { theme } from './themes/theme';
 
 const queryClient = new QueryClient();
 

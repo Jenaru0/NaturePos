@@ -1,71 +1,56 @@
-import React from 'react';
-import {View, StyleSheet, Alert} from 'react-native';
-import {Button, Text, Card} from 'react-native-paper';
-import {registrarVenta} from '../../services/sales';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { db } from '../../services/firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { NavigationProp } from '@react-navigation/native';
+import ProductCard from '../../components/ProductCard/ProductCard';
+import FloatingActionButton from '../../components/FloatingActionButton/FloatingActionButton';
 
-const SalesScreen = ({navigation}: {navigation: any}) => {
-  const handleVenta = async () => {
-    const venta = {
-      producto: 'Pan Integral',
-      cantidad: 2,
-      total: 10,
-      fecha: new Date().toISOString(),
-    };
+const SalesScreen = ({ navigation }: { navigation: NavigationProp<any> }) => {
+  interface Producto {
+    id: string;
+    // add other properties of Producto here
+  }
 
-    try {
-      await registrarVenta(venta);
-      Alert.alert('Éxito', 'Venta registrada con éxito');
-    } catch (error) {
-      Alert.alert('Error', 'Error al registrar la venta');
-      console.error(error);
-    }
+  const [productos, setProductos] = useState<Producto[]>([]);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(collection(db, 'productos'), snapshot => {
+      const items = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setProductos(items);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleViewCartPress = () => {
+    navigation.navigate('ViewCart');
   };
 
   return (
     <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>
-        Pantalla de Ventas
-      </Text>
-      <Card style={styles.card}>
-        <Card.Content>
-          <Text>Producto: Pan Integral</Text>
-          <Text>Cantidad: 2</Text>
-          <Text>Total: S/10</Text>
-        </Card.Content>
-      </Card>
-      <Button mode="contained" onPress={handleVenta} style={styles.button}>
-        Registrar Venta
-      </Button>
-      <Button
-        mode="outlined"
-        onPress={() => navigation.navigate('Inventario')}
-        style={styles.button}>
-        Ir al Inventario
-      </Button>
+      <FlatList
+        data={productos}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <ProductCard
+            product={item}
+            onPress={() => {}}
+          />
+        )}
+        contentContainerStyle={styles.flatListContent}
+      />
+      <FloatingActionButton onPress={handleViewCartPress} iconName="cart" />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    marginBottom: 20,
-    textAlign: 'center',
-  },
-  card: {
-    width: '100%',
-    marginBottom: 20,
-  },
-  button: {
-    marginTop: 10,
-    width: '100%',
-  },
+  container: { flex: 1, padding: 16, paddingBottom: 80 }, // Añadir paddingBottom para espacio adicional
+  flatListContent: { paddingBottom: 80 }, // Añadir paddingBottom para espacio adicional
 });
 
 export default SalesScreen;
