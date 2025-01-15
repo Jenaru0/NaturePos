@@ -1,60 +1,78 @@
+// components/VariantForm/VariantForm.tsx
 import React, { useState } from 'react';
-import { Alert } from 'react-native';
-import { TextInput, Button, Card } from 'react-native-paper';
+import { View, Alert } from 'react-native';
+import { TextInput, Button, Switch, Text } from 'react-native-paper';
 import styles from './styles';
 
 interface VariantFormProps {
-  onAddVariant: (nombre: string, capacidad: number, precio: number) => void;
+  onAddVariant: (
+    nombre: string,
+    capacidad: number,
+    precio: number,
+    dependeDeApertura?: boolean
+  ) => void;
 }
 
 const VariantForm: React.FC<VariantFormProps> = ({ onAddVariant }) => {
   const [nombreVariante, setNombreVariante] = useState('');
   const [capacidadVariante, setCapacidadVariante] = useState('');
   const [precioVariante, setPrecioVariante] = useState('');
+  const [dependeDeApertura, setDependeDeApertura] = useState(false);
 
-  const handleAddVariante = () => {
-    if (nombreVariante && capacidadVariante && precioVariante) {
-      onAddVariant(nombreVariante, Number(capacidadVariante), Number(precioVariante));
-      setNombreVariante('');
-      setCapacidadVariante('');
-      setPrecioVariante('');
-    } else {
+  const handleAdd = () => {
+    if (!nombreVariante.trim() || !capacidadVariante || !precioVariante) {
       Alert.alert('Error', 'Todos los campos de la variante son obligatorios.');
+      return;
     }
+    onAddVariant(
+      nombreVariante.trim(),
+      Number(capacidadVariante),
+      Number(precioVariante),
+      dependeDeApertura
+    );
+    setNombreVariante('');
+    setCapacidadVariante('');
+    setPrecioVariante('');
+    setDependeDeApertura(false);
   };
 
   return (
-    <Card style={styles.card}>
-      <Card.Title title="Agregar Variante" />
-      <Card.Content>
-        <TextInput
-          label="Nombre de la Variante"
-          value={nombreVariante}
-          onChangeText={setNombreVariante}
-          mode="outlined"
-          style={styles.input}
+    <View style={styles.card}>
+      <Text style={styles.title}>Agregar Variante</Text>
+      <TextInput
+        label="Nombre de la Variante"
+        value={nombreVariante}
+        onChangeText={setNombreVariante}
+        mode="outlined"
+        style={styles.input}
+      />
+      <TextInput
+        label="Capacidad"
+        value={capacidadVariante}
+        onChangeText={setCapacidadVariante}
+        mode="outlined"
+        keyboardType="numeric"
+        style={styles.input}
+      />
+      <TextInput
+        label="Precio"
+        value={precioVariante}
+        onChangeText={setPrecioVariante}
+        mode="outlined"
+        keyboardType="numeric"
+        style={styles.input}
+      />
+      <View style={styles.switchContainer}>
+        <Text>¿Requiere Apertura?</Text>
+        <Switch
+          value={dependeDeApertura}
+          onValueChange={setDependeDeApertura}
         />
-        <TextInput
-          label="Capacidad"
-          value={capacidadVariante}
-          onChangeText={setCapacidadVariante}
-          keyboardType="numeric"
-          mode="outlined"
-          style={styles.input}
-        />
-        <TextInput
-          label="Precio"
-          value={precioVariante}
-          onChangeText={setPrecioVariante}
-          keyboardType="numeric"
-          mode="outlined"
-          style={styles.input}
-        />
-        <Button mode="contained" onPress={handleAddVariante} style={styles.addButton}>
-          Agregar Variante
-        </Button>
-      </Card.Content>
-    </Card>
+      </View>
+      <Button mode="contained" onPress={handleAdd} style={styles.addButton}>
+        Agregar Variante
+      </Button>
+    </View>
   );
 };
 

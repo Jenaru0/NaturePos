@@ -10,12 +10,19 @@ interface ProductCardProps {
     stock?: number;
     variantes?: { nombre: string; capacidad: number; precio: number }[];
     precio?: number;
-    imagen?: string;
+    imagen?: string; // <-- URL
   };
   onPress: (product: any) => void;
   showVariants?: boolean;
   highlightLowStock?: boolean;
 }
+
+// Imagen por defecto local
+
+const defaultImage = require('../../assets/noimage.png');
+
+// O una URL:
+// const DEFAULT_IMAGE_URL = 'https://tu-sitio.com/img/no-image.png';
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
@@ -23,6 +30,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
   showVariants = false,
   highlightLowStock = false,
 }) => {
+  // Manejo de "placeholder" si no hay product.imagen
+  const imageSource =
+    product.imagen && product.imagen.trim().length > 0
+      ? { uri: product.imagen }
+      : defaultImage;
+
   return (
     <TouchableOpacity
       style={[
@@ -31,19 +44,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
       ]}
       onPress={() => onPress(product)}
     >
-      {product.imagen && (
-        <Image source={{ uri: product.imagen }} style={styles.productImage} />
-      )}
+      <Image source={imageSource} style={styles.productImage} />
+      
       <Text style={styles.productName}>{product.nombre}</Text>
-      {product.precio !== null && (
+      {product.precio != null && (
         <Text style={styles.productPrice}>S/ {product.precio}</Text>
       )}
-      {product.stock !== null && (
+      {product.stock != null && (
         <Text style={styles.productStock}>
           {(product.stock ?? 0) <= 5 ? 'Stock Bajo: ' : 'Stock: '}
           {product.stock}
         </Text>
       )}
+
+      {/* Variantes */}
       {showVariants && product.variantes && product.variantes.length > 0 && (
         <View style={styles.variantsContainer}>
           {product.variantes.slice(0, 2).map((variante, index) => (

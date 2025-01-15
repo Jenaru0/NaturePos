@@ -1,5 +1,6 @@
+// components/VariantCard/VariantCard.tsx
 import React from 'react';
-import { Text, View, Alert } from 'react-native';
+import { View, Text, Alert } from 'react-native';
 import { RectButton, Swipeable } from 'react-native-gesture-handler';
 import styles from './styles';
 
@@ -7,11 +8,17 @@ interface VariantCardProps {
   nombre: string;
   capacidad: number;
   precio: number;
-  stock?: number;
+  dependeDeApertura?: boolean;
   onDelete: () => void;
 }
 
-const VariantCard: React.FC<VariantCardProps> = ({ nombre, capacidad, precio, stock, onDelete }) => {
+const VariantCard: React.FC<VariantCardProps> = ({
+  nombre,
+  capacidad,
+  precio,
+  dependeDeApertura,
+  onDelete,
+}) => {
   const renderRightActions = () => (
     <RectButton
       style={styles.deleteButton}
@@ -33,10 +40,10 @@ const VariantCard: React.FC<VariantCardProps> = ({ nombre, capacidad, precio, st
   return (
     <Swipeable renderRightActions={renderRightActions}>
       <View style={styles.card}>
-        <Text style={styles.text}>Nombre: {nombre}</Text>
+        <Text style={styles.text}>Variante: {nombre}</Text>
         <Text style={styles.text}>Capacidad: {capacidad}</Text>
         <Text style={styles.text}>Precio: S/{precio.toFixed(2)}</Text>
-        <Text style={styles.text}>Stock: {stock}</Text>
+        {dependeDeApertura && <Text style={styles.text}>Requiere Apertura</Text>}
       </View>
     </Swipeable>
   );

@@ -1,37 +1,44 @@
+// components/FloatingActionButton/FloatingActionButton.tsx
 import React from 'react';
-import { TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { StyleSheet, View } from 'react-native';
+import { FAB } from 'react-native-paper';
 
-interface FloatingActionButtonProps {
+/**
+ * Props para nuestro FAB personalizado
+ */
+interface FABProps {
   onPress: () => void;
-  iconName: string;
+  iconName: string;  // Nombre del ícono (de MaterialCommunityIcons)
+  label?: string;    // Texto opcional a mostrar en el FAB
 }
 
-const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({ onPress, iconName }) => {
+const FloatingActionButton: React.FC<FABProps> = ({
+  onPress,
+  iconName,
+  label,
+}) => {
   return (
-    <TouchableOpacity style={styles.floatingButton} onPress={onPress}>
-      <Icon name={iconName} size={28} color="#fff" />
-    </TouchableOpacity>
+    <View style={styles.container}>
+      <FAB
+        icon={iconName}
+        onPress={onPress}
+        style={styles.fab}
+        label={label}
+        small={false}
+      />
+    </View>
   );
 };
 
+export default FloatingActionButton;
+
 const styles = StyleSheet.create({
-  floatingButton: {
+  container: {
     position: 'absolute',
-    bottom: 80, // Ajusta la altura para estar por encima de la barra de navegación
-    right: 20,
-    backgroundColor: '#03DAC4', // Color Primario
-    borderRadius: 30,
-    width: 60,
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
+    right: 16,
+    bottom: 80,
+  },
+  fab: {
+    // Aquí puedes personalizar más estilos
   },
 });
-
-export default FloatingActionButton;

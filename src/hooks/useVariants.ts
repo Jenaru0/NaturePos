@@ -11,7 +11,9 @@ const useVariants = (initialVariants: Variante[] = [], totalStock: number, unida
   const [variantes, setVariantes] = useState<Variante[]>(initialVariants);
 
   const calculateStock = useCallback((capacidad: number) => {
-    if (!unidadesPorContenedor) return 0;
+    if (!unidadesPorContenedor) {
+      return 0;
+    }
     return Math.floor(totalStock / unidadesPorContenedor) * capacidad;
   }, [totalStock, unidadesPorContenedor]);
 

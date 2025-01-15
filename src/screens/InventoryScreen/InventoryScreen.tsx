@@ -64,8 +64,8 @@ const InventoryScreen = ({ navigation }: { navigation: NavigationProp<any> }) =>
         columnWrapperStyle={styles.row}
         contentContainerStyle={styles.flatListContent}
       />
-      <FloatingActionButton onPress={handleAddProductPress} iconName="add" />
-    </View>
+<FloatingActionButton onPress={handleAddProductPress} iconName="plus" />
+</View>
   );
 };
 

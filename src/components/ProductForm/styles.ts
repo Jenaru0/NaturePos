@@ -59,6 +59,39 @@ marginBottom: 16,
     borderColor: 'red',
     borderWidth: 1,
   },
+
+  // ...
+  // Agrega los estilos que te faltan:
+  imageSection: {
+    marginTop: 16,
+    marginBottom: 16,
+    // Estilos que desees
+  },
+  imagePreviewContainer: {
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  productImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 8,
+    marginBottom: 8,
+    resizeMode: 'cover',
+  },
+  removeImageButton: {
+    // Estilo para el botón "Eliminar Imagen"
+    marginVertical: 4,
+  },
+  pickImageButton: {
+    // Estilo para el botón "Seleccionar Imagen"
+    alignSelf: 'flex-start',
+    marginVertical: 8,
+  },
+  helpText: {
+    marginBottom: 10,
+    fontStyle: 'italic',
+    color: '#666',
+  },
 });
 
 export default styles;
